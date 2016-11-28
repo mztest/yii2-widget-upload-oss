@@ -12,7 +12,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\InputWidget;
 
-class UploadOSS extends InputWidget
+class FileUploadOSS extends InputWidget
 {
     /**
      * @var array the HTML attributes for the input tag.
@@ -41,11 +41,11 @@ class UploadOSS extends InputWidget
     <div class="input-group">
       {input}
       <span class="input-group-btn">
-        {uploadButton}
+      {uploadButton}
       </span>
     </div>
 HTML;
-    
+
     public function init()
     {
         parent::init();
@@ -58,30 +58,45 @@ HTML;
         }
 
         if (!isset($this->uploadButtonOptions['class'])) {
-            $this->uploadButtonOptions['class'] = 'btn btn-default';
+            $this->uploadButtonOptions['class'] = 'btn btn-default fileinput-button';
         }
 
     }
 
     public function run()
     {
-        $clientOptions = $this->getClientOptions();
-        $this->registerPlugin('fileupload');
+        $view = $this->getView();
+        FileUploadAsset::register($view);
+
+
+        $id = $this->getUploadInputId();
+        $js = "jQuery('#$id').fileupload();";
+        $view->registerJs($js);
+
         echo $this->renderInputGroup();
     }
-    
+
+    protected function getUploadInputId()
+    {
+        $id = $this->options['id'];
+
+        return $id.'-upload-file';
+    }
+
     protected function renderInputGroup()
     {
         $uploadButtonContent = ArrayHelper::remove($this->uploadButtonOptions, 'content', Yii::t('app', 'Select File'));
-        $uploadButton = Html::button($uploadButtonContent, $this->uploadButtonOptions);
+        $uploadButtonContent .= Html::input('file', $this->getUploadInputId(), '', ['id' => $this->getUploadInputId()]);
+
+        $uploadButton = Html::tag('span', $uploadButtonContent, $this->uploadButtonOptions);
 
         if ($this->hasModel()) {
-            $input =  Html::activeInput($this->type, $this->model, $this->attribute, $this->options);
+            $input =  Html::activeTextInput($this->model, $this->attribute, $this->options);
         } else {
-            $input = Html::input($this->type, $this->name, $this->value, $this->options);
+            $input = Html::textInput($this->name, $this->value, $this->options);
         }
 
-        $inputGroupContent = strtr($this->containerTemplate, [
+        $inputGroupContent = strtr($this->inputTemplate, [
             '{input}' => $input,
             '{uploadButton}' => $uploadButton,
         ]);
