@@ -130,6 +130,12 @@ HTML;
             'autoUpload' => false,
 //            'dataType' => 'json',
 //            'acceptFileTypes' =>  new JsExpression('/(\.|\/)(gif|jpe?g|png)$/i'),
+            "messages" =>  [
+                "maxNumberOfFiles" => Yii::t('app', 'Maximum number of files exceeded'),
+                "acceptFileTypes" => Yii::t('app', 'File type not allowed'),
+                "maxFileSize" =>  Yii::t('app', 'File is too large'),
+                "minFileSize" =>  Yii::t('app', 'File is too small')
+            ],
             'formData' => [],
         ];
         $this->clientOptions = ArrayHelper::merge($clientOptions, $this->clientOptions);
