@@ -10,10 +10,16 @@ namespace mztest\uploadOSS;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Json;
 use yii\widgets\InputWidget;
 
 class FileUploadOSS extends InputWidget
 {
+    /**
+     * @var array the HTML attributes for the input tag.
+     * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
+     */
+    public $progressBarContainerOptions = [];
     /**
      * @var array the HTML attributes for the input tag.
      * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
@@ -39,12 +45,22 @@ class FileUploadOSS extends InputWidget
      */
     public $inputTemplate = <<< HTML
     <div class="input-group">
-      {input}
-      <span class="input-group-btn">
-      {uploadButton}
-      </span>
+        {input}
+        <span class="input-group-btn">
+            {uploadButton}
+        </span>
     </div>
 HTML;
+
+    public $progressBarTemplate = <<<HTML
+    <div class="file-info"></div>
+    <div class="progress">
+        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0;">
+            0%
+        </div>
+    </div>
+HTML;
+
 
     public function init()
     {
@@ -58,7 +74,11 @@ HTML;
         }
 
         if (!isset($this->uploadButtonOptions['class'])) {
-            $this->uploadButtonOptions['class'] = 'btn btn-default fileinput-button';
+            $this->uploadButtonOptions['class'] = 'btn btn-primary fileinput-button';
+        }
+
+        if (!isset($this->progressBarContainerOptions['id'])) {
+            $this->progressBarContainerOptions['id'] = $this->getProgressBarContainerId();
         }
 
     }
@@ -68,11 +88,19 @@ HTML;
         $view = $this->getView();
         FileUploadAsset::register($view);
 
-
+        $js = [];
         $id = $this->getUploadInputId();
-        $js = "jQuery('#$id').fileupload();";
-        $view->registerJs($js);
+        $options = empty($this->clientOptions) ? '' : Json::htmlEncode($this->clientOptions);
+        $js[] = "jQuery('#$id').fileupload($options);";
 
+        if (!empty($this->clientEvents)) {
+            foreach ($this->clientEvents as $event => $handler) {
+                $js[] = "jQuery('#$id').on('$event', $handler);";
+            }
+        }
+        $view->registerJs(implode("\n", $js));
+
+        echo $this->renderProgressBar();
         echo $this->renderInputGroup();
     }
 
@@ -81,6 +109,13 @@ HTML;
         $id = $this->options['id'];
 
         return $id.'-upload-file';
+    }
+
+    protected function getProgressBarContainerId()
+    {
+        $id = $this->options['id'];
+
+        return $id.'-progress-bar';
     }
 
     protected function renderInputGroup()
@@ -103,8 +138,18 @@ HTML;
         return $inputGroupContent;
     }
 
+    protected function renderProgressBar()
+    {
+        return Html::tag('div', $this->progressBarTemplate, $this->progressBarContainerOptions);
+    }
+
     protected function getClientOptions()
     {
+        $clientOptions = [
+            'autoUpload' => false,
+            'formData' => [],
+        ];
+        $this->clientOptions = ArrayHelper::merge($clientOptions, $this->clientOptions);
         return $this->clientOptions;
     }
 }
