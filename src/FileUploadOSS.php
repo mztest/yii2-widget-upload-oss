@@ -193,6 +193,10 @@ HTML;
                     $(".file-console", container).empty().html("<span class=\"text-danger\">" + file.error + "</span>");
                 }
             }'),
+            'fileuploaddone' => new JsExpression('function(e, data) {
+                var that = $(this), container = that.parents("[id$=container]");
+                $("#'.$this->options['id'].'").val(fileUploadOSS.formData.key);
+            }'),
         ];
 
         if (!empty($clientEvents)) {
