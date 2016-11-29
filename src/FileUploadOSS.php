@@ -107,7 +107,7 @@ HTML;
     protected function renderInputGroup()
     {
         $uploadButtonContent = ArrayHelper::remove($this->uploadButtonOptions, 'content', Yii::t('app', 'Select File'));
-        $uploadButtonContent .= Html::input('file', $this->getUploadInputId(), '', ['id' => $this->getUploadInputId()]);
+        $uploadButtonContent .= Html::input('file', 'file', '', ['id' => $this->getUploadInputId()]);
 
         $uploadButton = Html::tag('span', $uploadButtonContent, $this->uploadButtonOptions);
 
@@ -128,6 +128,7 @@ HTML;
     {
         $clientOptions = [
             'autoUpload' => false,
+            'dataType' => 'json',
             'formData' => [],
         ];
         $this->clientOptions = ArrayHelper::merge($clientOptions, $this->clientOptions);
@@ -173,11 +174,10 @@ HTML;
             }'),
             'fileuploadsubmit' => new JsExpression('function(e, data) {
                 var that = $(this);
-                data.url = fileUploadOSS.formData.host;
+                data.url = fileUploadOSS.host;
                 data.formData = fileUploadOSS.formData;
                 
-                if (!data.formData.host) {
-                  data.context.find("button").prop("disabled", false);
+                if (!data.url) {
                   console.log("disabled submit");
                   return false;
                 }

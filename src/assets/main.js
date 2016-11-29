@@ -2,9 +2,10 @@
  * Created by guoxiaosong on 2016/11/29.
  */
 var fileUploadOSS = fileUploadOSS || {};
+fileUploadOSS.host = null;
+fileUploadOSS.directory = null;
 fileUploadOSS.signatureExpire = 0;
 fileUploadOSS.formData = {
-    host: null,
     key: null,
     policy: null,
     OSSAccessKeyId: null,
@@ -22,14 +23,14 @@ fileUploadOSS.getSignature = function(url, filename) {
             method: 'GET',
             async: false,
             success: function(data) {
+                fileUploadOSS.host = data.host;
+                fileUploadOSS.directory = data.directory;
                 fileUploadOSS.signatureExpire = parseInt(data.expire);
                 $.extend(fileUploadOSS.formData, {
                     OSSAccessKeyId: data.accessKeyId,
                     policy: data.policy,
                     signature: data.signature,
-                    callback: data.callback,
-                    dir: data.dir,
-                    host: data.host
+                    callback: data.callback || ''
                 });
             }
         });
@@ -47,7 +48,7 @@ fileUploadOSS.randomString = function(len) {
     return str;
 };
 fileUploadOSS.generateObjectKey = function(filename) {
-    var fullFileName = fileUploadOSS.formData.dir + fileUploadOSS.randomString(32);
+    var fullFileName = fileUploadOSS.directory + fileUploadOSS.randomString(32);
     var pos = filename.lastIndexOf('.');
     var suffix = '';
     if (pos != -1) {
