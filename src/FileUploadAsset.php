@@ -20,7 +20,9 @@ class FileUploadAsset extends AssetBundle
     ];
     public $js = [
         'js/vendor/jquery.ui.widget.js',
-        'js/jquery.fileupload.js'
+        'js/jquery.fileupload.js',
+        'js/jquery.fileupload-process.js',
+        'js/jquery.fileupload-validate.js',
     ];
     public $depends = [
         'yii\web\JqueryAsset',

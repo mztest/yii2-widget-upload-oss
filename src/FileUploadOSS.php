@@ -56,13 +56,13 @@ class FileUploadOSS extends InputWidget
             0%
         </div>
     </div>
+    <div class="file-console" style="display: none;"></div>
     <div class="input-group">
         {input}
         <span class="input-group-btn">
             {uploadButton}
         </span>
     </div>
-    <div class="file-console" style="display: none;"></div>
 HTML;
 
 
@@ -128,7 +128,8 @@ HTML;
     {
         $clientOptions = [
             'autoUpload' => false,
-            'dataType' => 'json',
+//            'dataType' => 'json',
+//            'acceptFileTypes' =>  new JsExpression('/(\.|\/)(gif|jpe?g|png)$/i'),
             'formData' => [],
         ];
         $this->clientOptions = ArrayHelper::merge($clientOptions, $this->clientOptions);
@@ -178,15 +179,19 @@ HTML;
                 data.formData = fileUploadOSS.formData;
                 
                 if (!data.url) {
-                  console.log("disabled submit");
                   return false;
                 }
             }'),
-            'fileuploadsend' => new JsExpression('function(e, data) {
-                console.log("send");
+            'fileuploadfail' => new JsExpression('function(e, data) {
+                var that = $(this), container = that.parents("[id$=container]");
+                $(".file-console", container).empty().html("<span class=\"text-danger\">" + data.errorThrown + ": 请联系管理员!</span>");
             }'),
-            'fileuploadstart' => new JsExpression('function(e, data) {
-                console.log("start");
+            'fileuploadprocessalways' => new JsExpression('function(e, data) {
+                var that = $(this), container = that.parents("[id$=container]"),
+                index = data.index, file = data.files[index];
+                if (file.error) {
+                    $(".file-console", container).empty().html("<span class=\"text-danger\">" + file.error + "</span>");
+                }
             }'),
         ];
 
