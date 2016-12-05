@@ -25,31 +25,31 @@ Usage
 
 1. Set signature action at your controller
        
-       ```php
-       public function actions()
-           {
-               return [
-                   'upload' => [
-                       'oss-signature' => [
-                           'class' => 'mztest\uploadOSS\actions\Signature',
-                           'accessKeyId' => 'Your aliyunOSS access key id here.',
-                           'accessKeySecret' => 'Your aliyunOSS access secret id here.',
-                           'host' => 'Your aliyunOSS upload bucket url',
-                       ],
-                   ],
-               ];
-           }
-       ```
+   ```php
+   public function actions()
+   {
+       return [
+           'upload' => [
+               'oss-signature' => [
+                   'class' => 'mztest\uploadOSS\actions\Signature',
+                   'accessKeyId' => 'Your aliyunOSS access key id here.',
+                   'accessKeySecret' => 'Your aliyunOSS access secret id here.',
+                   'host' => 'Your aliyunOSS upload bucket url',
+               ],
+           ],
+       ];
+   }
+   ```
 2. Simply use it in your code by  :
    
-       ```php
-       <?= \mztest\uploadOSS\FileUploadOSS::widget(); ?>
-       ```
-   
-       or
-   
-       ```php
-       <?= $form->field($model, 'url')->widget(FileUploadOSS::className(), [
-           'signatureAction' => ['oss-signature']
-       ]) ?>
-       ```
+   ```php
+   <?= \mztest\uploadOSS\FileUploadOSS::widget(); ?>
+   ```
+
+   or
+
+   ```php
+   <?= $form->field($model, 'url')->widget(FileUploadOSS::className(), [
+       'signatureAction' => ['oss-signature']
+   ]) ?>
+   ```
