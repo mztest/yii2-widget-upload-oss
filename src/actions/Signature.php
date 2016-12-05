@@ -9,6 +9,7 @@ namespace mztest\uploadOSS\actions;
 
 use Yii;
 use yii\base\Action;
+use yii\helpers\Json;
 use yii\web\Response;
 
 class Signature extends Action
@@ -33,7 +34,8 @@ class Signature extends Action
 
     public function run()
     {
-        if (!Yii::$app->request->get('lowIE')) {
+        $isLowIE = Yii::$app->request->get('lowIE');
+        if (!$isLowIE) {
             Yii::$app->response->format = Response::FORMAT_JSON;
         }
 
@@ -62,7 +64,7 @@ class Signature extends Action
             'directory' => $this->directory
         ];
 
-        return $response;
+        return $isLowIE ? Json::encode($response) :$response;
     }
 
     private static function getGmtISO8601($time)
