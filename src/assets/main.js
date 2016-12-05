@@ -13,7 +13,29 @@ fileUploadOSS.formData = {
     callback: null,
     signature: null
 };
+// Returns the version of Internet Explorer or a -1
+// (indicating the use of another browser).
+fileUploadOSS.getIEVersion = function () {
+    var sAgent = window.navigator.userAgent;
+    var Idx = sAgent.indexOf("MSIE");
+    var version = 0;
+
+    // If IE, return version number.
+    if (Idx > 0) {
+        version = parseInt(sAgent.substring(Idx + 5, sAgent.indexOf(".", Idx)));
+    } else if (!!navigator.userAgent.match(/Trident\/7\./)) {
+    // If IE 11 then look for Updated user agent string.
+        version = 11;
+    } else {
+        version = 0; //It is not IE
+    }
+    return version;
+};
 fileUploadOSS.getSignature = function(url, filename) {
+    var version = fileUploadOSS.getIEVersion();
+    if (version > 0 && version <= 9) {
+        url += (url.indexOf('?') == '-1') ? '?lowIE=1' : '&lowIE=1';
+    }
     //可以判断当前expire是否超过了当前时间,如果超过了当前时间,就重新取一下.3s 做为缓冲
     var now = Date.parse(new Date()) / 1000;
     if (fileUploadOSS.signatureExpire < now + 3) {

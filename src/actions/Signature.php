@@ -33,7 +33,9 @@ class Signature extends Action
 
     public function run()
     {
-        Yii::$app->response->format = Response::FORMAT_JSON;
+        if (!Yii::$app->request->get('lowIE')) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+        }
 
         $expire = time() + 30; //设置该policy超时时间是30s. 即这个policy过了这个有效时间，将不能访问
         $expiration = self::getGmtISO8601($expire);
