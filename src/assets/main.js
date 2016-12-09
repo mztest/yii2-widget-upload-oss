@@ -34,6 +34,7 @@ fileUploadOSS.getIEVersion = function () {
 fileUploadOSS.getSignature = function(url, filename) {
     var version = fileUploadOSS.getIEVersion();
     if (version > 0 && version <= 9) {
+        $.support.cors = true;
         url += (url.indexOf('?') == '-1') ? '?lowIE=1' : '&lowIE=1';
     }
     //可以判断当前expire是否超过了当前时间,如果超过了当前时间,就重新取一下.3s 做为缓冲
