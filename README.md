@@ -15,7 +15,7 @@ php composer.phar require mztest/yii2-widget-upload-oss
 or add
 
 ```
-"mztest/yii2-single-file-upload": "*"
+"mztest/yii2-widget-upload-oss": "*"
 ```
 
 to the require section of your `composer.json` file.
